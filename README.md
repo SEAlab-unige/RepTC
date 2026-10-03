@@ -66,9 +66,3 @@ pip install tensorflow keras-flops scikit-learn numpy scapy psutil
 A preprint is under review at arXiv. The citation will be added here once it is announced.
 
 Related work from the same group: [ProtectIT_Unige](https://github.com/SEAlab-unige/ProtectIT_Unige), hardware-aware architecture search for encrypted traffic classification under a fixed input representation.
-
-## 📄 Citation
-
-A preprint is under review at arXiv. The citation will be added here once it is announced.
-
-Related work from the same group: [ProtectIT_Unige](https://github.com/SEAlab-unige/ProtectIT_Unige), hardware-aware NAS for encrypted traffic classification under a fixed input representation.
