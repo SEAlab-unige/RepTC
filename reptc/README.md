@@ -56,19 +56,21 @@ Use [`preprocessing/`](../preprocessing/) to generate these files from your own 
 
 ## 🎛️ Configuring a run
 
-Everything is at the top of `B01_NAS.py`.
+All settings are variables at the top of `B01_NAS.py` and in the `NAS(...)` call below it. The values shown here are the ones currently in the file; change them to suit your target device and your dataset.
 
-**Hardware limits.** Set them to whatever your target device allows:
+**Hardware limits.** Each limit is checked before a candidate is trained, and candidates that exceed any of them are discarded. Set them to whatever your target device allows:
 
 ```python
-params_thr   = 60000     # parameters  -> Flash
-max_tens_thr = 4000      # peak tensor -> RAM
-flops_thr    = 500000    # compute
-flash_thr    = 250000
-ram_thr      = 60000
+params_thr   = 60000     # parameters, maps to Flash
+max_tens_thr = 4000      # peak intermediate tensor, maps to RAM
+flops_thr    = 500000    # compute per inference
+flash_thr    = 250000    # bytes
+ram_thr      = 60000     # bytes
 ```
 
-**What the search is free to change:**
+Set a limit to `np.inf` to leave that resource unconstrained.
+
+**What the search is free to change.** Each of these switches one variable on or off:
 
 ```python
 search_A  = True    # architecture
@@ -79,27 +81,37 @@ fixed_Sh  = "strategy2"   # value used when search_Sh = False
 fixed_Ls  = 784           # value used when search_Ls = False
 ```
 
-Turning any of these off reduces the search to a conventional one over the remaining variables, which is useful for isolating what joint optimization contributes.
+When all three are `True` the three variables evolve together. Turning one off holds it at its fixed value, which reduces the problem to a conventional search over the rest and is useful for isolating what joint optimization contributes.
 
 **Architecture family:**
 
 ```python
 architecture_family = "cnn"       # or "mlp"
-mlp_units_range     = (16, 128)   # MLP only, depth is still searched
+mlp_units_range     = (16, 128)   # used only for "mlp"
 ```
+
+Depth is searched in both cases, since blocks are added and removed during the search, bounded by `max_depth`.
 
 **Search effort:**
 
 ```python
-n_generations = 50
-n_child       = 20
-n_mutations   = 2
-max_depth     = 4
+n_generations = 50    # generations
+n_child       = 20    # candidates per generation
+n_mutations   = 2     # mutations applied to each candidate
+max_depth     = 4     # maximum number of blocks
 ```
 
-**Training mode.** `is_train_proxy` trains candidates on a subset of folds for speed during the search. `is_train` and `use_full_training` switch to the full routine.
+**Training mode.** Two separate settings:
 
-**Number of classes.** Set `num_classes` in `B01_NAS.py`. Note that the classifier head and the data-fetching calls in `Library_Net.py` currently use a fixed value of 11, so change it there as well when moving to a dataset with a different number of classes.
+```python
+use_full_training = False   # False: proxy routine, True: full routine
+is_train_proxy    = True    # actually fit the model in the proxy routine
+is_train          = False   # actually fit the model in the full routine
+```
+
+`use_full_training` chooses the routine used to evaluate candidates. The proxy routine trains on a single fold with an internal validation split and is much faster, so it is the default during the search. The full routine trains across all folds. The two `is_train` flags control whether the chosen routine actually calls `fit()`; setting them to `False` runs the loop without training, which is handy for checking the hardware filtering and the search mechanics on a new dataset.
+
+**Dataset size.** Set `num_classes` in `B01_NAS.py` to match your dataset. The default is 11, for ISCX VPN-nonVPN.
 
 ---
 
