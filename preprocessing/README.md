@@ -1,6 +1,6 @@
 # Session preprocessing
 
-Extracts bidirectional sessions from `.pcap` files, applies a header preprocessing strategy, and writes fixed-length session bytes in IDX format, ready for the search framework.
+This folder contains the script that turns raw traffic into the inputs the search framework consumes. It extracts bidirectional sessions from `.pcap` files, applies a header preprocessing strategy, and writes fixed-length session bytes in IDX format.
 
 Run it once per strategy. Each run produces the file pair that the search selects between.
 
