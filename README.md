@@ -1,12 +1,12 @@
 # RepTC
 
-**Representation-Aware Optimization for Efficient Traffic Classification on Edge IoT Devices**
+**Rep**resentation-aware **T**raffic **C**lassification.
 
-Representation-aware neural architecture search for session-level traffic classification under microcontroller-class resource limits.
+This repository contains a search framework that designs traffic classifiers for devices with very little memory and compute, such as microcontrollers and edge gateways.
 
-Traffic classifiers are usually built by fixing the input representation in advance, deciding how many bytes of a session the model reads and how header fields are anonymized or stripped, and then searching only the network architecture. Those choices are not independent. The representation decides what information reaches the model and how much memory and compute the model needs to process it.
+Traffic classifiers are usually built by fixing the input representation in advance, deciding how many bytes of a session the model reads and how header fields are anonymized or stripped, and then optimizing only the network architecture. Those choices are not independent. The representation decides what information reaches the model and how much memory and compute the model needs to process it.
 
-RepTC searches them together. A single evolutionary loop explores the architecture, the session input length, and the header preprocessing strategy under explicit hardware limits, and returns a configuration that fits the budget you set.
+RepTC optimizes them together. A single evolutionary loop explores the architecture, the session input length, and the header preprocessing strategy under explicit hardware limits, and returns a configuration that fits the budget you set.
 
 ---
 
@@ -25,7 +25,7 @@ Turns raw `.pcap` traffic into fixed-length session byte sequences, with configu
 ## ⚙️ How it works
 
 1. **Preprocess.** Extract bidirectional sessions from your `.pcap` files, once per preprocessing strategy, into `.idx3` and `.idx1` files.
-2. **Search.** Run the NAS loop. At each generation it mutates the architecture, the input length, and the preprocessing strategy, discards every candidate that violates the hardware limits, trains the admissible ones, and keeps the best.
+2. **Search.** Run the search loop. At each generation it mutates the architecture, the input length, and the preprocessing strategy, discards every candidate that violates the hardware limits, trains the admissible ones, and keeps the best.
 3. **Deploy.** The selected model is small enough to quantize and run on a microcontroller or an edge gateway.
 
 ---
@@ -60,6 +60,12 @@ pip install tensorflow keras-flops scikit-learn numpy scapy psutil
 ```
 
 ---
+
+## 📄 Citation
+
+A preprint is under review at arXiv. The citation will be added here once it is announced.
+
+Related work from the same group: [ProtectIT_Unige](https://github.com/SEAlab-unige/ProtectIT_Unige), hardware-aware architecture search for encrypted traffic classification under a fixed input representation.
 
 ## 📄 Citation
 
